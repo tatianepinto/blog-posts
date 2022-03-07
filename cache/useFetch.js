@@ -1,24 +1,38 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef} from 'react';
+import { dispatch } from './store';
 
-const useFetch = (url) => {
-    const [status, setStatus] = useState('idle');
-    const [data, setData] = useState([]);
+export const useFetch = (url) => {
+    const cache = useRef({});
 
     useEffect(() => {
+        let cancelRequest = false;
         if(!url) return;
         const fetchData = async () => {
-            try {
-                setStatus('Fun fetchData - fetching...');
-                const response = await fetch(url);
-                const data = await response.json();
-                setData(data);
-                setStatus('Fun fetchData - fetched');
-            } catch(e) {
-                console.log(e.message);
-            }      
+            dispatch({ type: 'FETCHING' });
+            
+                if(cache.current[url]){
+                    const data = cache.current[url];
+                    dispatch({ type: 'FETCHED' });
+                } else {
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        cache.current[url] = data;
+                        if(cancelRequest) return;
+                        dispatch({ type: 'FETCHED', payload: data });
+                    } catch(e) {
+                        if(cancelRequest) return;
+                        dispatch({ type: 'ERROR', payload : e.message });
+                    } 
+                }     
         };
 
         fetchData();
+
+        return cleanUp = () => {
+            cancelRequest = true;
+        };
+
     }, [url]);
     
     return { status, data };
