@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "DEBUG=blog-posts:* npm start"
+    "debug": "DEBUG=blog-posts:* npm start",
+    "test": "npx mocha"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
