@@ -18,12 +18,10 @@ describe('server - Posts', () => {
     it('GET /api/posts?tags=culture,history&sortBy=likes', (done) => {
         server
             .get('/api/posts?tags=culture,history&sortBy=likes')
-            .expect('set-cookie', 'result={}; PATH=/', done)
-            // .end((err, res) => {
-            //     if(err) return done(err);
-            //     res.status.should.equal(200);
-            //     res.cookies.should.have.property('result');
-            //     done();
-            // });
+            .end((err, res) => {
+                if(err) return done(err);
+                res.status.should.equal(200);
+                done();
+            });
     });
 });

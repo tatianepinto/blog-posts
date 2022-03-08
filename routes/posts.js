@@ -6,10 +6,10 @@ const data = require("../db/forTestPurpose.json");
 router.get('/', function (req, res, next) {
     if (req.query.tags && req.query.tags[0] != null) {
         // res.clearCookie('sorted_likes');
-        console.log(req.cookies, " - req.cookies");
+        // console.log(req.cookies, " - req.cookies");
         const errorResponse = () => res.status(400).send('{"error": "sortBy parameter is invalid"}\n');
         const renderResult = (name) => {
-            if (req.cookies[name]) res.send(req.cookies[name]);
+            if (req.cookies[name]) res.render('posts', { answer: req.cookies[name] });
             else {
                 res.cookie(name, JSON.stringify(result));
                 res.render('posts', { answer: JSON.stringify(result) });
