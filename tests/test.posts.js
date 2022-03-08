@@ -1,13 +1,29 @@
 const supertest = require('supertest');
 const should = require('should');
+const assert = require('assert');
 
-const server = supertest.agent('https://api.hatchways.io/assessment/blog/posts');
+const server = supertest.agent('http://localhost:3000');
 server.timeout(1500);
 
 describe('server - Posts', () => {
     it('should return tech posts', (done) => {
         server
-            .get('?tag=tech')
-            .expect(200, done);
+            .get('/api/posts?tags=tech')
+            .end((err, res) => {
+                if(err) return done(err);
+                res.status.should.equal(200);
+                done();
+            })
+    });
+    it('GET /api/posts?tags=culture,history&sortBy=likes', (done) => {
+        server
+            .get('/api/posts?tags=culture,history&sortBy=likes')
+            .expect('set-cookie', 'result={}; PATH=/', done)
+            // .end((err, res) => {
+            //     if(err) return done(err);
+            //     res.status.should.equal(200);
+            //     res.cookies.should.have.property('result');
+            //     done();
+            // });
     });
 });
