@@ -3,24 +3,20 @@ const router = express.Router();
 
 const data = require("../db/forTestPurpose.json");
 
-/* GET posts and params from url */
+/* GET posts and query from url */
 router.get('/', function (req, res, next) {
-    const queryTags = req.query.tags.split(',');
-    if (queryTags !== '') {
-        console.log(queryTags, " - tags");
+    console.log(req.query, " - req.query");
+    if (req.query.tags && req.query.tags[0] != null) {
+        const queryTags = req.query.tags.split(',');
         const result = { posts: [] };
         data.posts.forEach((postUnit) => {
-            // console.log(postUnit, " - postUnit");
             postUnit.tags.forEach((tag) => {
                 const index = queryTags.indexOf(tag);
                 if (index !== -1) { result.posts.push(postUnit); }
             })
         });
-        console.log(result, " - result");
-        console.log(result.posts.length, " - result.posts.length");
-        console.log(data.posts.length, " - data.length");
         res.render('posts', { answer: JSON.stringify(result) });
-    } else { }
+    } else res.status(400).send('{"error": "The tag parameter is required"}\n');
 });
 
 module.exports = router;
